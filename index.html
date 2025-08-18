@@ -1,225 +1,580 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Life Journey Analytics - Personal Life Statistics Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: "Inter", sans-serif;
-      background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
-      min-height: 100vh;
-      color: white;
-    }
-    .ad-container {
-      margin: 2rem 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-    }
-    .ad-inner {
-      width: 100%;
-      margin: 0 auto;
-    }
-  </style>
-</head>
-<body>
-  <div class="container mx-auto px-4 py-8 max-w-7xl">
-    <!-- Header -->
-    <header class="text-center mb-12">
-      <h1 class="text-5xl font-bold mb-4" style="background:linear-gradient(45deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
-        Life Journey Analytics
-      </h1>
-      <p class="text-gray-300 text-lg">Discover the remarkable statistics of your life's journey</p>
-    </header>
-
-    <!-- AD PLACEMENT 1 -->
-    <div class="ad-container">
-      <div class="ad-inner" style="max-width:300px;">
-        <script type="text/javascript">
-          atOptions = {
-            'key' : '074a42023780c827d7fc5da9abe6818e',
-            'format' : 'iframe',
-            'height' : 250,
-            'width' : 300,
-            'params' : {}
-          };
-        </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/074a42023780c827d7fc5da9abe6818e/invoke.js"></script>
-      </div>
-    </div>
-
-    <!-- Birth Date Input -->
-    <div class="mb-12 glass-effect rounded-2xl p-8">
-      <div class="max-w-xl mx-auto">
-        <label for="birthdate" class="block text-lg font-semibold mb-4 text-center">Enter Your Birth Date</label>
-        <input type="date" id="birthdate" class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-6" />
-        <button onclick="calculateLifeStats()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300">
-          Discover Your Life Journey
-        </button>
-      </div>
-    </div>
-
-    <!-- Life Statistics -->
-    <div id="lifeStats" class="hidden">
-      <h2 class="text-3xl font-bold mb-8 gradient-text text-center">Your Life in Numbers</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="statsGrid"></div>
-      
-      <!-- Chart Section -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        <div class="glass-effect rounded-2xl p-6">
-          <h3 class="text-xl font-semibold mb-4">Life Time Distribution</h3>
-          <div class="chart-container">
-            <canvas id="lifePieChart"></canvas>
-          </div>
-        </div>
-        <div class="glass-effect rounded-2xl p-6">
-          <h3 class="text-xl font-semibold mb-4">Life Progress</h3>
-          <div class="chart-container">
-            <canvas id="lifeProgressChart"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- AD PLACEMENT 2 -->
-      <div class="ad-container">
-        <div class="ad-inner" style="max-width:320px;">
-          <script type="text/javascript">
-            atOptions = {
-              'key' : '31687288b860daf012dbff672d5ac432',
-              'format' : 'iframe',
-              'height' : 50,
-              'width' : 320,
-              'params' : {}
-            };
-          </script>
-          <script type="text/javascript" src="//www.highperformanceformat.com/31687288b860daf012dbff672d5ac432/invoke.js"></script>
-        </div>
-      </div>
-
-      <!-- Timeline Section -->
-      <div class="glass-effect rounded-2xl p-8 mb-12">
-        <h3 class="text-2xl font-bold mb-6 text-center">Your Life Timeline</h3>
-        <div id="lifeTimeline" class="space-y-4"></div>
-      </div>
-
-      <!-- AD PLACEMENT 3 -->
-      <div class="ad-container">
-        <div class="ad-inner" style="max-width:160px;">
-          <script type="text/javascript">
-            atOptions = {
-              'key' : '1747dd0d4d831d882e57673b14400dc2',
-              'format' : 'iframe',
-              'height' : 600,
-              'width' : 160,
-              'params' : {}
-            };
-          </script>
-          <script type="text/javascript" src="//www.highperformanceformat.com/1747dd0d4d831d882e57673b14400dc2/invoke.js"></script>
-        </div>
-      </div>
-
-      <!-- AD PLACEMENT 4 -->
-      <div class="ad-container">
-        <div class="ad-inner" style="max-width:160px;">
-          <script type="text/javascript">
-            atOptions = {
-              'key' : '10fd94bdb093bd1ccd80527f9a3f1a6d',
-              'format' : 'iframe',
-              'height' : 300,
-              'width' : 160,
-              'params' : {}
-            };
-          </script>
-          <script type="text/javascript" src="//www.highperformanceformat.com/10fd94bdb093bd1ccd80527f9a3f1a6d/invoke.js"></script>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function calculateLifeStats() {
-      const birthdate = document.getElementById("birthdate").value;
-      if (!birthdate) {
-        alert("Please enter your birth date!");
-        return;
-      }
-
-      const birth = new Date(birthdate);
-      const today = new Date();
-      const lifeExpectancy = 72;
-
-      const diff = today - birth;
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const years = (days / 365.25).toFixed(1);
-      const months = Math.floor(days / 30.44);
-      const weeks = Math.floor(days / 7);
-      const hours = days * 24;
-      const minutes = hours * 60;
-      const seconds = diff / 1000;
-
-      const stats = [
-        { label: "Years Lived", value: years },
-        { label: "Months Lived", value: months },
-        { label: "Weeks Lived", value: weeks },
-        { label: "Days Lived", value: days },
-        { label: "Hours Lived", value: hours.toLocaleString() },
-        { label: "Minutes Lived", value: minutes.toLocaleString() },
-        { label: "Seconds Lived", value: Math.floor(seconds).toLocaleString() },
-      ];
-
-      const statsGrid = document.getElementById("statsGrid");
-      statsGrid.innerHTML = stats.map(stat => `
-        <div class="stat-card p-6 rounded-2xl glass-effect">
-          <p class="text-gray-400 mb-2">${stat.label}</p>
-          <p class="text-2xl font-bold number-counter">${stat.value}</p>
-        </div>
-      `).join("");
-
-      const lifeStats = document.getElementById("lifeStats");
-      lifeStats.classList.remove("hidden");
-
-      // Pie Chart
-      new Chart(document.getElementById("lifePieChart"), {
-        type: "doughnut",
-        data: {
-          labels: ["Years Lived", "Years Left"],
-          datasets: [{
-            data: [years, lifeExpectancy - years],
-            backgroundColor: ["#667eea", "#2d3748"],
-          }]
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Journey Analytics - Personal Life Statistics Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
         }
-      });
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .number-counter {
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: "tnum";
+        }
+        
+        .category-icon {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-      // Progress Chart
-      new Chart(document.getElementById("lifeProgressChart"), {
-        type: "bar",
-        data: {
-          labels: ["Progress"],
-          datasets: [{
-            label: "Years",
-            data: [years],
-            backgroundColor: "#764ba2",
-          }]
-        },
-        options: { scales: { y: { beginAtZero: true, max: lifeExpectancy } } }
-      });
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
 
-      // Timeline
-      const timeline = document.getElementById("lifeTimeline");
-      timeline.innerHTML = `
-        <div class="p-4 glass-effect rounded-xl">
-          <p><span class="font-semibold">You were born:</span> ${birth.toDateString()}</p>
-          <p><span class="font-semibold">You've lived:</span> ${days.toLocaleString()} days</p>
-          <p><span class="font-semibold">Estimated life expectancy:</span> ${lifeExpectancy} years</p>
-          <p><span class="font-semibold">Years left (approx):</span> ${(lifeExpectancy - years).toFixed(1)}</p>
+        .ad-container {
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4 gradient-text">Life Journey Analytics</h1>
+            <p class="text-gray-300 text-lg">Discover the remarkable statistics of your life's journey</p>
+        </header>
+
+        <!-- AD PLACEMENT 1: BELOW HEADER -->
+        <div class="ad-container">
+           <script type="text/javascript">
+	atOptions = {
+		'key' : '074a42023780c827d7fc5da9abe6818e',
+		'format' : 'iframe',
+		'height' : 250,
+		'width' : 300,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/074a42023780c827d7fc5da9abe6818e/invoke.js"></script>
         </div>
-      `;
-    }
-  </script>
+
+        <!-- Birth Date Input -->
+        <div class="glass-effect rounded-2xl p-8 mb-8 text-center">
+            <div class="max-w-md mx-auto">
+                <label class="block text-xl font-semibold mb-4">
+                    <i class="fas fa-calendar-alt mr-2 text-blue-400"></i>
+                    Enter Your Birth Date
+                </label>
+                <input type="date" id="birthdate" class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-600 text-white text-center text-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                <button onclick="calculateStats()" class="mt-4 px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-calculator mr-2"></i>
+                    Calculate My Life Stats
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Container -->
+        <div id="results" class="hidden">
+            <!-- Age Summary -->
+            <div class="glass-effect rounded-2xl p-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold gradient-text" id="ageYears">0</div>
+                        <div class="text-sm text-gray-400">Years Old</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-400" id="ageDays">0</div>
+                        <div class="text-sm text-gray-400">Days Lived</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-400" id="ageHours">0</div>
+                        <div class="text-sm text-gray-400">Hours Experienced</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-purple-400" id="ageMinutes">0</div>
+                        <div class="text-sm text-gray-400">Minutes Alive</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biological Statistics -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-heartbeat category-icon text-2xl mr-3"></i>
+                    Biological Statistics
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="stat-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <i class="fas fa-heart text-red-400 text-2xl"></i>
+                            <span class="text-xs bg-red-400 bg-opacity-20 px-2 py-1 rounded-full text-red-300">VITAL</span>
+                        </div>
+                        <div class="text-2xl font-bold number-counter" id="heartbeats">0</div>
+                        <div class="text-sm text-gray-400">Heartbeats</div>
+                        <div class="text-xs text-gray-500 mt-1">~70 BPM average</div>
+                    </div>
+                    
+                    <div class="stat-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <i class="fas fa-wind text-blue-400 text-2xl"></i>
+                            <span class="text-xs bg-blue-400 bg-opacity-20 px-2 py-1 rounded-full text-blue-300">VITAL</span>
+                        </div>
+                        <div class="text-2xl font-bold number-counter" id="breaths">0</div>
+                        <div class="text-sm text-gray-400">Breaths Taken</div>
+                        <div class="text-xs text-gray-500 mt-1">~15 per minute</div>
+                    </div>
+                    
+                    <div class="stat-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <i class="fas fa-eye text-yellow-400 text-2xl"></i>
+                            <span class="text-xs bg-yellow-400 bg-opacity-20 px-2 py-1 rounded-full text-yellow-300">AUTO</span>
+                        </div>
+                        <div class="text-2xl font-bold number-counter" id="blinks">0</div>
+                        <div class="text-sm text-gray-400">Eye Blinks</div>
+                        <div class="text-xs text-gray-500 mt-1">~17,000 per day</div>
+                    </div>
+                    
+                    <div class="stat-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <i class="fas fa-walking text-green-400 text-2xl"></i>
+                            <span class="text-xs bg-green-400 bg-opacity-20 px-2 py-1 rounded-full text-green-300">ACTIVE</span>
+                        </div>
+                        <div class="text-2xl font-bold number-counter" id="steps">0</div>
+                        <div class="text-sm text-gray-400">Steps Taken</div>
+                        <div class="text-xs text-gray-500 mt-1">~8,000 per day</div>
+                    </div>
+                    
+                    <div class="stat-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <i class="fas fa-utensils text-orange-400 text-2xl"></i>
+                            <span class="text-xs bg-orange-400 bg-opacity-20 px-2 py-1 rounded-full text-orange-300">DAILY</span>
+                        </div>
+                        <div class="text-2xl font-bold number-counter" id="meals">0</div>
+                        <div class="text-sm text-gray-400">Meals Eaten</div>
+                        <div class="text-xs text-gray-500 mt-1">~3 per day</div>
+                    </div>
+                    
+                    <div class="stat-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <i class="fas fa-bed text-purple-400 text-2xl"></i>
+                            <span class="text-xs bg-purple-400 bg-opacity-20 px-2 py-1 rounded-full text-purple-300">REST</span>
+                        </div>
+                        <div class="text-2xl font-bold number-counter" id="sleepHours">0</div>
+                        <div class="text-sm text-gray-400">Hours Slept</div>
+                        <div class="text-xs text-gray-500 mt-1">~8 hours per day</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AD PLACEMENT 2: AFTER BIOLOGICAL STATS -->
+            <div class="ad-container">
+               <script type="text/javascript">
+	atOptions = {
+		'key' : '31687288b860daf012dbff672d5ac432',
+		'format' : 'iframe',
+		'height' : 50,
+		'width' : 320,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/31687288b860daf012dbff672d5ac432/invoke.js"></script>
+            </div>
+
+            <!-- Time Analysis -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-clock category-icon text-2xl mr-3"></i>
+                    Time Analysis
+                </h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="stat-card rounded-xl p-6">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-chart-pie text-blue-400 mr-2"></i>
+                            Life Time Distribution
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="timeChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="stat-card rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <i class="fas fa-calendar-week text-indigo-400 text-xl"></i>
+                                <span class="text-xs bg-indigo-400 bg-opacity-20 px-2 py-1 rounded-full text-indigo-300">WEEKS</span>
+                            </div>
+                            <div class="text-2xl font-bold number-counter" id="weeksLived">0</div>
+                            <div class="text-sm text-gray-400">Weeks Experienced</div>
+                        </div>
+                        
+                        <div class="stat-card rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <i class="fas fa-birthday-cake text-pink-400 text-xl"></i>
+                                <span class="text-xs bg-pink-400 bg-opacity-20 px-2 py-1 rounded-full text-pink-300">SPECIAL</span>
+                            </div>
+                            <div class="text-2xl font-bold number-counter" id="birthdays">0</div>
+                            <div class="text-sm text-gray-400">Birthdays Celebrated</div>
+                        </div>
+                        
+                        <div class="stat-card rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <i class="fas fa-leaf text-green-400 text-xl"></i>
+                                <span class="text-xs bg-green-400 bg-opacity-20 px-2 py-1 rounded-full text-green-300">SEASONS</span>
+                            </div>
+                            <div class="text-2xl font-bold number-counter" id="seasons">0</div>
+                            <div class="text-sm text-gray-400">Seasons Witnessed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AD PLACEMENT 3: AFTER TIME ANALYSIS -->
+            <div class="ad-container">
+              <script type="text/javascript">
+	atOptions = {
+		'key' : '1747dd0d4d831d882e57673b14400dc2',
+		'format' : 'iframe',
+		'height' : 600,
+		'width' : 160,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/1747dd0d4d831d882e57673b14400dc2/invoke.js"></script>
+            </div>
+
+            <!-- Milestone Tracking -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-trophy category-icon text-2xl mr-3"></i>
+                    Life Milestones
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="stat-card rounded-xl p-6 text-center">
+                        <i class="fas fa-baby text-4xl text-pink-400 mb-3"></i>
+                        <div class="text-lg font-semibold">Days Since Birth</div>
+                        <div class="text-2xl font-bold number-counter" id="daysSinceBirth">0</div>
+                    </div>
+                    
+                    <div class="stat-card rounded-xl p-6 text-center">
+                        <i class="fas fa-moon text-4xl text-blue-300 mb-3"></i>
+                        <div class="text-lg font-semibold">Full Moons Seen</div>
+                        <div class="text-2xl font-bold number-counter" id="fullMoons">0</div>
+                    </div>
+                    
+                    <div class="stat-card rounded-xl p-6 text-center">
+                        <i class="fas fa-sun text-4xl text-yellow-400 mb-3"></i>
+                        <div class="text-lg font-semibold">Sunrises Witnessed</div>
+                        <div class="text-2xl font-bold number-counter" id="sunrises">0</div>
+                    </div>
+                    
+                    <div class="stat-card rounded-xl p-6 text-center">
+                        <i class="fas fa-globe text-4xl text-green-400 mb-3"></i>
+                        <div class="text-lg font-semibold">Earth Rotations</div>
+                        <div class="text-2xl font-bold number-counter" id="earthRotations">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fun Statistics -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-smile category-icon text-2xl mr-3"></i>
+                    Fun Statistics
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="stat-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <i class="fas fa-laugh text-yellow-300 text-2xl"></i>
+                            <span class="text-xs bg-yellow-400 bg-opacity-20 px-2 py-1 rounded-full text-yellow-300">JOY</span>
+                        </div>
+                        <div class="text-2xl font-bold number-counter" id="laughs">0</div>
+                        <div class="text-sm text-gray-400">Times Laughed</div>
+                        <div class="text-xs text-gray-500 mt-1">~15 times per day</div>
+                    </div>
+                    
+                    <div class="stat-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <i class="fas fa-tint text-blue-300 text-2xl"></i>
+                            <span class="text-xs bg-blue-400 bg-opacity-20 px-2 py-1 rounded-full text-blue-300">HYDRO</span>
+                        </div>
+                        <div class="text-2xl font-bold number-counter" id="waterConsumed">0</div>
+                        <div class="text-sm text-gray-400">Liters of Water</div>
+                        <div class="text-xs text-gray-500 mt-1">~2.5L per day</div>
+                    </div>
+                    
+                    <div class="stat-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <i class="fas fa-book text-purple-300 text-2xl"></i>
+                            <span class="text-xs bg-purple-400 bg-opacity-20 px-2 py-1 rounded-full text-purple-300">LEARN</span>
+                        </div>
+                        <div class="text-2xl font-bold number-counter" id="wordsSpoken">0</div>
+                        <div class="text-sm text-gray-400">Words Spoken</div>
+                        <div class="text-xs text-gray-500 mt-1">~16,000 per day</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historical Context -->
+            <div class="glass-effect rounded-2xl p-6">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-history category-icon text-2xl mr-3"></i>
+                    Since Your Birth
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="historicalFacts">
+                    <!-- Historical facts will be populated here -->
+                </div>
+            </div>
+
+            <!-- AD PLACEMENT 4: BEFORE FOOTER/END OF CONTENT -->
+            <div class="ad-container">
+             <script type="text/javascript">
+	atOptions = {
+		'key' : '10fd94bdb093bd1ccd80527f9a3f1a6d',
+		'format' : 'iframe',
+		'height' : 300,
+		'width' : 160,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/10fd94bdb093bd1ccd80527f9a3f1a6d/invoke.js"></script>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let timeChart;
+        
+        function calculateStats() {
+            const birthDate = new Date(document.getElementById('birthdate').value);
+            if (!birthDate || isNaN(birthDate)) {
+                alert('Please enter a valid birth date');
+                return;
+            }
+            
+            const now = new Date();
+            const timeDiff = now - birthDate;
+            
+            // Basic age calculations
+            const ageInMs = timeDiff;
+            const ageInMinutes = ageInMs / (1000 * 60);
+            const ageInHours = ageInMinutes / 60;
+            const ageInDays = ageInHours / 24;
+            const ageInWeeks = ageInDays / 7;
+            const ageInYears = ageInDays / 365.25;
+            
+            // Animate numbers
+            animateNumber('ageYears', Math.floor(ageInYears));
+            animateNumber('ageDays', Math.floor(ageInDays));
+            animateNumber('ageHours', Math.floor(ageInHours));
+            animateNumber('ageMinutes', Math.floor(ageInMinutes));
+            
+            // Biological statistics
+            animateNumber('heartbeats', Math.floor(ageInMinutes * 70)); // ~70 BPM
+            animateNumber('breaths', Math.floor(ageInMinutes * 15)); // ~15 per minute
+            animateNumber('blinks', Math.floor(ageInDays * 17000)); // ~17,000 per day
+            animateNumber('steps', Math.floor(ageInDays * 8000)); // ~8,000 per day
+            animateNumber('meals', Math.floor(ageInDays * 3)); // ~3 per day
+            animateNumber('sleepHours', Math.floor(ageInDays * 8)); // ~8 hours per day
+            
+            // Time analysis
+            animateNumber('weeksLived', Math.floor(ageInWeeks));
+            animateNumber('birthdays', Math.floor(ageInYears));
+            animateNumber('seasons', Math.floor(ageInDays / 91.25)); // ~91.25 days per season
+            
+            // Milestones
+            animateNumber('daysSinceBirth', Math.floor(ageInDays));
+            animateNumber('fullMoons', Math.floor(ageInDays / 29.5)); // ~29.5 days per lunar cycle
+            animateNumber('sunrises', Math.floor(ageInDays));
+            animateNumber('earthRotations', Math.floor(ageInDays));
+            
+            // Fun statistics
+            animateNumber('laughs', Math.floor(ageInDays * 15)); // ~15 times per day
+            animateNumber('waterConsumed', Math.floor(ageInDays * 2.5)); // ~2.5L per day
+            animateNumber('wordsSpoken', Math.floor(ageInDays * 16000)); // ~16,000 per day
+            
+            // Create time distribution chart
+            createTimeChart(ageInHours);
+            
+            // Add historical context
+            addHistoricalContext(birthDate);
+            
+            // Show results
+            document.getElementById('results').classList.remove('hidden');
+        }
+        
+        function animateNumber(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const duration = 2000; // 2 seconds
+            const startTime = Date.now();
+            const startValue = 0;
+            
+            function updateNumber() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function for smooth animation
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutQuart);
+                
+                element.textContent = currentValue.toLocaleString();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+            
+            updateNumber();
+        }
+        
+        function createTimeChart(totalHours) {
+            const ctx = document.getElementById('timeChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (timeChart) {
+                timeChart.destroy();
+            }
+            
+            const sleepHours = totalHours * 0.33; // ~8 hours per day
+            const workHours = totalHours * 0.25; // ~6 hours per day (assuming started working at 18)
+            const eatingHours = totalHours * 0.08; // ~2 hours per day
+            const leisureHours = totalHours - sleepHours - workHours - eatingHours;
+            
+            timeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sleep', 'Work/Study', 'Eating', 'Leisure & Other'],
+                    datasets: [{
+                        data: [sleepHours, workHours, eatingHours, leisureHours],
+                        backgroundColor: [
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(251, 191, 36, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(139, 92, 246, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(34, 197, 94, 1)',
+                            'rgba(251, 191, 36, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white',
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function addHistoricalContext(birthDate) {
+            const facts = [
+                {
+                    icon: 'fas fa-globe-americas',
+                    title: 'World Population',
+                    description: 'The world population has grown significantly since your birth',
+                    color: 'text-blue-400'
+                },
+                {
+                    icon: 'fas fa-rocket',
+                    title: 'Space Exploration',
+                    description: 'Multiple space missions have launched during your lifetime',
+                    color: 'text-purple-400'
+                },
+                {
+                    icon: 'fas fa-mobile-alt',
+                    title: 'Technology Evolution',
+                    description: 'Smartphones and internet have transformed society',
+                    color: 'text-green-400'
+                },
+                {
+                    icon: 'fas fa-leaf',
+                    title: 'Environmental Changes',
+                    description: 'Climate patterns have shifted during your years',
+                    color: 'text-yellow-400'
+                }
+            ];
+            
+            const container = document.getElementById('historicalFacts');
+            container.innerHTML = '';
+            
+            facts.forEach(fact => {
+                const factElement = document.createElement('div');
+                factElement.className = 'stat-card rounded-xl p-6';
+                factElement.innerHTML = `
+                    <div class="flex items-start">
+                        <i class="${fact.icon} ${fact.color} text-2xl mr-4 mt-1"></i>
+                        <div>
+                            <h3 class="font-semibold text-lg mb-2">${fact.title}</h3>
+                            <p class="text-gray-400 text-sm">${fact.description}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(factElement);
+            });
+        }
+        
+        // Set today's date as max for birth date input
+        document.getElementById('birthdate').max = new Date().toISOString().split('T')[0];
+        
+        // Add some default animation to stat cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.stat-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
 </body>
 </html>
